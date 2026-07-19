@@ -1,0 +1,21 @@
+version: "2"
+
+linters:
+  enable:
+    - errorlint
+    - revive
+    - misspell
+    - unconvert
+    - unparam
+    - paralleltest
+    - tparallel
+  settings:
+    revive:
+      rules:
+        - name: exported
+          disabled: true
+
+formatters:
+  enable:
+    - gofumpt
+    - goimports
