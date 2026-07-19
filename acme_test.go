@@ -10,6 +10,8 @@ import (
 )
 
 func TestAcmeHotelUnmarshal(t *testing.T) {
+	t.Parallel()
+
 	sampleJSON := `[
   {
     "Id": "iJhz",
