@@ -1,5 +1,7 @@
 package hotels
 
+import "strings"
+
 type Hotel struct {
 	ID                string    `json:"id"`             // e.g. "iJhz"
 	DestinationID     int       `json:"destination_id"` // e.g. 5432
@@ -22,6 +24,24 @@ type Location struct {
 type Amenities struct {
 	General []string `json:"general"`
 	Room    []string `json:"room"`
+}
+
+// TODO: categorize amenities
+// WARN: feature incomplete! everythign is "general" now
+func NewAmenities(raw []string) Amenities {
+	amen := Amenities{
+		General: make([]string, 0),
+		Room:    make([]string, 0),
+	}
+
+	for _, r := range raw {
+		s := strings.ToLower(strings.TrimSpace(r))
+		if len(s) > 1 {
+			amen.General = append(amen.General, s)
+		}
+	}
+
+	return amen
 }
 
 type Images struct {

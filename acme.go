@@ -1,8 +1,10 @@
 package hotels
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"strings"
+)
 
-// AcmeHotel is the raw shape returned by the acme supplier endpoint.
 type AcmeHotel struct {
 	ID            string   `json:"Id"`            // e.g. "iJhz"
 	DestinationID int      `json:"DestinationId"` // e.g. 5432
@@ -17,8 +19,35 @@ type AcmeHotel struct {
 	Facilities    []string `json:"Facilities"`
 }
 
-// UnmarshalJSON tolerates acme's inconsistent encoding of missing coordinates,
-// which show up as a JSON number, null, or an empty string depending on the record.
+func (h *AcmeHotel) Hotel() *Hotel {
+	if h == nil {
+		return nil
+	}
+
+	return &Hotel{
+		ID:            h.ID,
+		DestinationID: h.DestinationID,
+		Name:          h.Name,
+		Location: Location{
+			Latitude:  *h.Latitude,
+			Longitude: *h.Longitude,
+			Address:   strings.Join([]string{strings.TrimSpace(h.Address), h.PostalCode}, ", "),
+			City:      h.City,
+			Country:   h.Country,
+		},
+		Description: strings.TrimSpace(h.Description),
+		Amenities:   NewAmenities(h.Facilities),
+
+		// NOTE: acme doesn't provide images
+		Images: Images{Rooms: []Image{}, Site: []Image{}, Amenities: []Image{}},
+
+		// NOTE: acme doesn't come with booking conditions
+		BookingConditions: []string{},
+	}
+}
+
+// we need to override the default unmarshalling logic because
+// lat / lng can arrive in 3 different data types (string, null, float)
 func (h *AcmeHotel) UnmarshalJSON(data []byte) error {
 	type alias AcmeHotel
 	aux := struct {
