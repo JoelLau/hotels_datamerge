@@ -31,11 +31,11 @@ func (h *AcmeHotel) Hotel() *Hotel {
 		Location: Location{
 			Latitude:  *h.Latitude,
 			Longitude: *h.Longitude,
-			Address:   strings.Join([]string{strings.TrimSpace(h.Address), h.PostalCode}, ", "),
+			Address:   strings.Join([]string{clean(h.Address), h.PostalCode}, ", "),
 			City:      h.City,
 			Country:   h.Country,
 		},
-		Description: strings.TrimSpace(h.Description),
+		Description: clean(h.Description),
 		Amenities:   NewAmenities(h.Facilities),
 
 		// NOTE: acme doesn't provide images
