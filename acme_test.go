@@ -136,7 +136,7 @@ func TestAcmeHotel(t *testing.T) {
 					Location: hotels.Location{
 						Latitude:  1.264751,
 						Longitude: 103.824006,
-						Address:   "8 Sentosa Gateway, Beach Villas, 098269",
+						Address:   "8 Sentosa Gateway, Beach Villas",
 						City:      "Singapore",
 						Country:   "SG",
 					},

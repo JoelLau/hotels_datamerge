@@ -25,17 +25,17 @@ func (h *AcmeHotel) Hotel() *Hotel {
 	}
 
 	return &Hotel{
-		ID:            h.ID,
+		ID:            strings.TrimSpace(h.ID),
 		DestinationID: h.DestinationID,
-		Name:          h.Name,
+		Name:          strings.TrimSpace(h.Name),
 		Location: Location{
 			Latitude:  *h.Latitude,
 			Longitude: *h.Longitude,
-			Address:   strings.Join([]string{clean(h.Address), h.PostalCode}, ", "),
-			City:      h.City,
-			Country:   h.Country,
+			Address:   strings.TrimSpace(h.Address),
+			City:      strings.TrimSpace(h.City),
+			Country:   strings.TrimSpace(h.Country),
 		},
-		Description: clean(h.Description),
+		Description: strings.TrimSpace(h.Description),
 		Amenities:   NewAmenities(h.Facilities),
 
 		// NOTE: acme doesn't provide images

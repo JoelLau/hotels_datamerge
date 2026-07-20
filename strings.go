@@ -1,11 +1,11 @@
 package hotels
 
-import "strings"
-
-func clean(s string, fns ...func(string) string) string {
-	s = strings.TrimSpace(s)
-	for _, fn := range fns {
-		s = fn(s)
+func LongestString(ss []string) string {
+	l := ""
+	for _, s := range ss {
+		if len(s) > len(l) {
+			l = s
+		}
 	}
-	return s
+	return l
 }
