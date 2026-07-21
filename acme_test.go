@@ -106,60 +106,52 @@ func TestAcmeHotel(t *testing.T) {
 		require.Equal(t, want, got)
 	})
 
-	t.Run("ToHotel", func(t *testing.T) {
+	t.Run("Hotel", func(t *testing.T) {
 		t.Parallel()
 
-		for _, tt := range []struct {
-			name  string
-			given hotels.AcmeHotel
-			want  hotels.Hotel
-		}{
-			{
-				name: "Example 1: Beach Villas Singapore",
-				given: hotels.AcmeHotel{
-					ID:            "iJhz",
-					DestinationID: 5432,
-					Name:          "Beach Villas Singapore",
-					Latitude:      new(1.264751),
-					Longitude:     new(103.824006),
-					Address:       " 8 Sentosa Gateway, Beach Villas ",
-					City:          "Singapore",
-					Country:       "SG",
-					PostalCode:    "098269",
-					Description:   "  This 5 star hotel is located on the coastline of Singapore.",
-					Facilities:    []string{"Pool", "BusinessCenter", "WiFi ", "DryCleaning", " Breakfast"},
-				},
-				want: hotels.Hotel{
-					ID:            "iJhz",
-					DestinationID: 5432,
-					Name:          "Beach Villas Singapore",
-					Location: hotels.Location{
-						Latitude:  1.264751,
-						Longitude: 103.824006,
-						Address:   "8 Sentosa Gateway, Beach Villas",
-						City:      "Singapore",
-						Country:   "SG",
-					},
-					Description: "This 5 star hotel is located on the coastline of Singapore.",
-					Amenities: hotels.Amenities{
-						General: []string{"pool", "businesscenter", "wifi", "drycleaning", "breakfast"},
-						Room:    []string{},
-					},
-					Images: hotels.Images{
-						Rooms:     []hotels.Image{},
-						Amenities: []hotels.Image{},
-						Site:      []hotels.Image{},
-					},
-					BookingConditions: []string{},
-				},
-			},
-		} {
-			t.Run(tt.name, func(t *testing.T) {
-				t.Parallel()
+		t.Run("Example 01: Beach Villas Singapore", func(t *testing.T) {
+			t.Parallel()
 
-				got := tt.given.Hotel()
-				require.Equal(t, tt.want, *got)
-			})
-		}
+			given := hotels.AcmeHotel{
+				ID:            "iJhz",
+				DestinationID: 5432,
+				Name:          "Beach Villas Singapore",
+				Latitude:      new(1.264751),
+				Longitude:     new(103.824006),
+				Address:       " 8 Sentosa Gateway, Beach Villas ",
+				City:          "Singapore",
+				Country:       "SG",
+				PostalCode:    "098269",
+				Description:   "  This 5 star hotel is located on the coastline of Singapore.",
+				Facilities:    []string{"Pool", "BusinessCenter", "WiFi ", "DryCleaning", " Breakfast"},
+			}
+
+			got := given.Hotel()
+			want := hotels.Hotel{
+				ID:            "iJhz",
+				DestinationID: 5432,
+				Name:          "Beach Villas Singapore",
+				Location: hotels.Location{
+					Latitude:  1.264751,
+					Longitude: 103.824006,
+					Address:   "8 Sentosa Gateway, Beach Villas",
+					City:      "Singapore",
+					Country:   "SG",
+				},
+				Description: "This 5 star hotel is located on the coastline of Singapore.",
+				Amenities: hotels.Amenities{
+					General: []string{"pool", "businesscenter", "wifi", "drycleaning", "breakfast"},
+					Room:    []string{},
+				},
+				Images: hotels.Images{
+					Rooms:     []hotels.Image{},
+					Amenities: []hotels.Image{},
+					Site:      []hotels.Image{},
+				},
+				BookingConditions: []string{},
+			}
+
+			require.Equal(t, want, *got)
+		})
 	})
 }

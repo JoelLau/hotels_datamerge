@@ -194,4 +194,12 @@ func TestPaperfliesHotel(t *testing.T) {
 
 		require.Equal(t, want, got)
 	})
+
+	t.Run("Hotel", func(t *testing.T) {
+		t.Parallel()
+
+		t.Run("asdf", func(t *testing.T) {
+			t.Parallel()
+		})
+	})
 }

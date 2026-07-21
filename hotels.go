@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"maps"
 	"slices"
-	"strings"
-	"unicode"
 )
 
 type ConflictingDestinationIDsError struct {
@@ -141,21 +139,6 @@ func (hs Hotels) mergeImages() Images {
 	return images
 }
 
-func (hs Hotels) getBookingConditions() []string {
-	bookingConditions := make([]string, 0)
-	for _, h := range hs {
-		for _, c := range h.BookingConditions {
-			trimmed := strings.TrimSpace(c)
-
-			if len(trimmed) > 0 && containsAlpha(trimmed) {
-				bookingConditions = append(bookingConditions, trimmed)
-			}
-		}
-	}
-	slices.Sort(bookingConditions)
-	return bookingConditions
-}
-
 func (hs Hotels) mergeBookingConditions() []string {
 	merged := make([]string, len(hs))
 	for _, h := range hs {
@@ -163,13 +146,4 @@ func (hs Hotels) mergeBookingConditions() []string {
 	}
 	slices.Sort(merged)
 	return merged
-}
-
-func containsAlpha(s string) bool {
-	for _, r := range s {
-		if unicode.IsLetter(r) {
-			return true
-		}
-	}
-	return false
 }

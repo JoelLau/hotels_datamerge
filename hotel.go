@@ -27,7 +27,7 @@ type Amenities struct {
 }
 
 // TODO: categorize amenities
-// WARN: feature incomplete! everythign is "general" now
+// WARN: feature incomplete! everything is classified as "general" now
 func NewAmenities(raw []string) Amenities {
 	amen := Amenities{
 		General: make([]string, 0),

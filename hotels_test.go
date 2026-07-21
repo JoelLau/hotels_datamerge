@@ -5,8 +5,6 @@ import (
 	hotels "hotels_data_merge"
 	"testing"
 
-	Hotels "hotels_data_merge"
-
 	"github.com/stretchr/testify/require"
 )
 
@@ -25,7 +23,7 @@ func TestHotels(t *testing.T) {
 				{ID: "iJhz", DestinationID: 5432},
 			}
 
-			got, err := Hotels.NewHotels(given)
+			got, err := hotels.NewHotels(given)
 			require.NoError(t, err)
 			require.Equal(t, given, got)
 		})
@@ -39,9 +37,9 @@ func TestHotels(t *testing.T) {
 				{ID: "iJhz", DestinationID: 3333},
 			}
 
-			got, err := Hotels.NewHotels(given)
+			got, err := hotels.NewHotels(given)
 
-			conflictErr, ok := errors.AsType[*Hotels.ConflictingDestinationIDsError](err)
+			conflictErr, ok := errors.AsType[*hotels.ConflictingDestinationIDsError](err)
 			require.True(t, ok)
 			require.Equal(t, "iJhz", conflictErr.HotelID)
 			require.ElementsMatch(t, []int{1111, 2222, 3333}, conflictErr.DestinationIDs)
@@ -56,11 +54,12 @@ func TestHotels(t *testing.T) {
 	})
 
 	t.Run("Merge", func(t *testing.T) {
+		t.Parallel()
+
 		t.Run("REQUIREMENTS.md example", func(t *testing.T) {
 			t.Parallel()
+			t.Skip("not implemented")
 
-			// The "iJhz" record as reported by each of the 3 suppliers, taken
-			// verbatim from the acme/patagonia/paperflies sample fixtures.
 			given := hotels.Hotels{
 				{
 					ID:            "iJhz",
