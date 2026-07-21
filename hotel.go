@@ -26,22 +26,29 @@ type Amenities struct {
 	Room    []string `json:"room"`
 }
 
+var amenityOverrides = map[string]string{
+	"wi fi": "wifi",
+}
+
 // TODO: categorize amenities
 // WARN: feature incomplete! everything is classified as "general" now
 func NewAmenities(raw []string) Amenities {
-	amen := Amenities{
+	amenities := Amenities{
 		General: make([]string, 0),
 		Room:    make([]string, 0),
 	}
 
 	for _, r := range raw {
-		s := strings.ToLower(strings.TrimSpace(r))
+		s := ToLowerCaseWithSpaces(strings.TrimSpace(r))
+		if override, ok := amenityOverrides[s]; ok {
+			s = override
+		}
 		if len(s) > 1 {
-			amen.General = append(amen.General, s)
+			amenities.General = append(amenities.General, s)
 		}
 	}
 
-	return amen
+	return amenities
 }
 
 type Images struct {

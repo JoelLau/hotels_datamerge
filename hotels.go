@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"maps"
 	"slices"
+	"strings"
 )
 
 type ConflictingDestinationIDsError struct {
@@ -48,6 +49,7 @@ func (hs Hotels) Merge() Hotel {
 	}
 }
 
+// assumes that only 1 unique ID exists in the slice
 func (hs Hotels) mergeID() string {
 	if len(hs) <= 0 {
 		return ""
@@ -56,6 +58,7 @@ func (hs Hotels) mergeID() string {
 	return hs[0].ID
 }
 
+// assumes that only 1 unique detinationID exists in the slice
 func (hs Hotels) mergeDestinationID() int {
 	if len(hs) <= 0 {
 		return 0
@@ -64,29 +67,22 @@ func (hs Hotels) mergeDestinationID() int {
 	return hs[0].DestinationID
 }
 
-func (hs Hotels) getNames() []string {
-	if hs == nil {
-		return nil
-	}
-
-	names := make([]string, len(hs))
-	for i, h := range hs {
-		names[i] = h.Name
-	}
-
-	return names
-}
-
 func (hs Hotels) mergeName() string {
-	longestName := ""
-	for _, n := range hs.getNames() {
-		if len(n) > len(longestName) {
-			longestName = n
-		}
+	if hs == nil {
+		return ""
 	}
-	return longestName
+
+	return LongestString(
+		Filter(
+			Transform(hs, func(h Hotel) string { return strings.TrimSpace(h.Name) }),
+			func(s string) bool { return len(s) > 0 },
+		),
+	)
 }
 
+// TODO: lat / lng should come from the same source
+// TODO: setting lat / lng must be atomic; both or neither should be nil
+// TODO: attempt to resolve ISO country / city codes; consider normalizing at supplier level
 func (hs Hotels) mergeLocation() *Location {
 	return &Location{
 		Latitude:  new(1.264751),
@@ -97,46 +93,73 @@ func (hs Hotels) mergeLocation() *Location {
 	}
 }
 
-func (hs Hotels) getDescription() []string {
-	if hs == nil {
-		return nil
-	}
-
-	descriptions := make([]string, len(hs))
-	for i, h := range hs {
-		descriptions[i] = h.Description
-	}
-
-	return descriptions
-}
-
 func (hs Hotels) mergeDescription() string {
-	longestDescription := ""
-	for _, d := range hs.getDescription() {
-		if len(d) > len(longestDescription) {
-			longestDescription = d
-		}
+	if hs == nil {
+		return ""
 	}
-	return longestDescription
+
+	return LongestString(
+		Filter(
+			Transform(hs, func(h Hotel) string { return strings.TrimSpace(h.Description) }),
+			func(s string) bool { return len(s) > 0 },
+		),
+	)
 }
 
 func (hs Hotels) mergeAmenities() Amenities {
-	var amenities Amenities
-	for _, h := range hs {
-		amenities.General = slices.Concat(amenities.General, h.Amenities.General)
-		amenities.Room = slices.Concat(amenities.Room, h.Amenities.Room)
+	mergeAmenityField := func(strArrArr [][]string) []string {
+		result := make([]string, 0)
+		for _, strArr := range strArrArr {
+			result = slices.Concat(result, strArr)
+		}
+
+		result = Transform(result, func(s string) string {
+			r := ToLowerCaseWithSpaces(strings.TrimSpace(s))
+			if override, ok := amenityOverrides[r]; ok {
+				return override
+			}
+			return r
+		})
+		result = Filter(result, func(s string) bool { return len(s) > 0 })
+		slices.Sort(result)
+		result = slices.Compact(result)
+
+		return result
 	}
-	return amenities
+
+	return Amenities{
+		General: mergeAmenityField(Transform(hs, func(h Hotel) []string { return h.Amenities.General })),
+		Room:    mergeAmenityField(Transform(hs, func(h Hotel) []string { return h.Amenities.Room })),
+	}
 }
 
 func (hs Hotels) mergeImages() Images {
-	var images Images
-	for _, h := range hs {
-		images.Rooms = slices.Concat(images.Rooms, h.Images.Rooms)
-		images.Site = slices.Concat(images.Site, h.Images.Site)
-		images.Amenities = slices.Concat(images.Amenities, h.Images.Amenities)
+	mergeImageField := func(imgArrArr [][]Image) []Image {
+		// key: link
+		// val: image
+		linkToImageMap := make(map[string]Image)
+		for _, imgArr := range imgArrArr {
+			for _, img := range imgArr {
+				k := strings.TrimSpace(img.Link)
+				if len(img.Description) > len(linkToImageMap[k].Description) {
+					linkToImageMap[k] = img
+				}
+			}
+		}
+
+		result := slices.Collect(maps.Values(linkToImageMap))
+		slices.SortStableFunc(result, func(a, b Image) int {
+			return strings.Compare(a.Link, b.Link)
+		})
+
+		return result
 	}
-	return images
+
+	return Images{
+		Rooms:     mergeImageField(Transform(hs, func(h Hotel) []Image { return h.Images.Rooms })),
+		Site:      mergeImageField(Transform(hs, func(h Hotel) []Image { return h.Images.Site })),
+		Amenities: mergeImageField(Transform(hs, func(h Hotel) []Image { return h.Images.Amenities })),
+	}
 }
 
 func (hs Hotels) mergeBookingConditions() []string {
@@ -144,6 +167,12 @@ func (hs Hotels) mergeBookingConditions() []string {
 	for _, h := range hs {
 		merged = slices.Concat(merged, h.BookingConditions)
 	}
-	slices.Sort(merged)
+
+	merged = Filter(
+		Transform(merged, func(s string) string { return strings.TrimSpace(s) }),
+		func(s string) bool { return len(s) > 0 },
+	)
+	// slices.Sort(merged)
+	merged = slices.Compact(merged)
 	return merged
 }

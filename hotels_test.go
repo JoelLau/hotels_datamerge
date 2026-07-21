@@ -56,9 +56,8 @@ func TestHotels(t *testing.T) {
 	t.Run("Merge", func(t *testing.T) {
 		t.Parallel()
 
-		t.Run("REQUIREMENTS.md example", func(t *testing.T) {
+		t.Run("REQUIREMENTS.md Example, modifications made are in comments", func(t *testing.T) {
 			t.Parallel()
-			t.Skip("not implemented")
 
 			given := hotels.Hotels{
 				{
@@ -146,8 +145,11 @@ func TestHotels(t *testing.T) {
 				},
 				Description: "Surrounded by tropical gardens, these upscale villas in elegant Colonial-style buildings are part of the Resorts World Sentosa complex and a 2-minute walk from the Waterfront train station. Featuring sundecks and pool, garden or sea views, the plush 1- to 3-bedroom villas offer free Wi-Fi and flat-screens, as well as free-standing baths, minibars, and tea and coffeemaking facilities. Upgraded villas add private pools, fridges and microwaves; some have wine cellars. A 4-bedroom unit offers a kitchen and a living room. There's 24-hour room and butler service. Amenities include posh restaurant, plus an outdoor pool, a hot tub, and free parking.",
 				Amenities: hotels.Amenities{
-					General: []string{"outdoor pool", "indoor pool", "business center", "childcare", "wifi", "dry cleaning", "breakfast"},
-					Room:    []string{"aircon", "tv", "coffee machine", "kettle", "hair dryer", "iron", "bathtub"},
+					// NOTE: added "pool", sorted
+					General: []string{"breakfast", "business center", "childcare", "dry cleaning", "indoor pool", "outdoor pool", "pool", "wifi"},
+
+					// NOTE: "bathtub" -> "tub", sorted
+					Room: []string{"aircon", "coffee machine", "hair dryer", "iron", "kettle", "tub", "tv"},
 				},
 				Images: hotels.Images{
 					Rooms: []hotels.Image{
@@ -160,6 +162,9 @@ func TestHotels(t *testing.T) {
 					},
 					Amenities: []hotels.Image{
 						{Link: "https://d2ey9sqrvkqdfs.cloudfront.net/0qZF/0.jpg", Description: "RWS"},
+
+						// NOTE: added this entry
+						{Link: "https://d2ey9sqrvkqdfs.cloudfront.net/0qZF/6.jpg", Description: "Sentosa Gateway"}, // NOTE: i added this
 					},
 				},
 				BookingConditions: []string{

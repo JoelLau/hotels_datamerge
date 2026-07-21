@@ -31,9 +31,9 @@ func (h *AcmeHotel) Hotel() *Hotel {
 		Location: &Location{
 			Latitude:  h.Latitude,
 			Longitude: h.Longitude,
-			Address:   NilIfEmpty(strings.TrimSpace(h.Address)),
-			City:      NilIfEmpty(strings.TrimSpace(h.City)),
-			Country:   NilIfEmpty(strings.TrimSpace(h.Country)),
+			Address:   ToNilIfEmpty(strings.TrimSpace(h.Address)),
+			City:      ToNilIfEmpty(strings.TrimSpace(h.City)),
+			Country:   ToNilIfEmpty(strings.TrimSpace(h.Country)),
 		},
 		Description: strings.TrimSpace(h.Description),
 		Amenities:   NewAmenities(h.Facilities),

@@ -140,7 +140,7 @@ func TestAcmeHotel(t *testing.T) {
 				},
 				Description: "This 5 star hotel is located on the coastline of Singapore.",
 				Amenities: hotels.Amenities{
-					General: []string{"pool", "businesscenter", "wifi", "drycleaning", "breakfast"},
+					General: []string{"pool", "business center", "wifi", "dry cleaning", "breakfast"},
 					Room:    []string{},
 				},
 				Images: hotels.Images{

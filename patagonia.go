@@ -37,7 +37,7 @@ func (h *PatagoniaHotel) Hotel() *Hotel {
 		Location: &Location{
 			Latitude:  new(h.Latitude),
 			Longitude: new(h.Longitude),
-			Address:   NilIfEmpty(address),
+			Address:   ToNilIfEmpty(address),
 			City:      nil,
 			Country:   nil,
 		},

@@ -25,9 +25,9 @@ func (h *PaperfliesHotel) Hotel() *Hotel {
 		Location: &Location{
 			Latitude:  nil,
 			Longitude: nil,
-			Address:   NilIfEmpty(strings.TrimSpace(h.Location.Address)),
+			Address:   ToNilIfEmpty(strings.TrimSpace(h.Location.Address)),
 			City:      nil,
-			Country:   NilIfEmpty(strings.TrimSpace(h.Location.Country)),
+			Country:   ToNilIfEmpty(strings.TrimSpace(h.Location.Country)),
 		},
 		Description: strings.TrimSpace(h.Details),
 		Amenities: Amenities{
