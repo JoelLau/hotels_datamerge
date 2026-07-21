@@ -18,8 +18,8 @@ func (e *ConflictingDestinationIDsError) Error() string {
 
 type Hotels []Hotel
 
-// WARN: assumes all ids are the same because
-// of how upstream code is structured at this point on 2026-07-19.
+// WARN: assumes all ids are the same because of
+// how upstream code is structured at this point on 2026-07-19.
 func NewHotels(hs []Hotel) (Hotels, error) {
 	destinationIDs := map[int]bool{}
 	for _, sh := range hs {
@@ -80,17 +80,92 @@ func (hs Hotels) mergeName() string {
 	)
 }
 
-// TODO: lat / lng should come from the same source
-// TODO: setting lat / lng must be atomic; both or neither should be nil
-// TODO: attempt to resolve ISO country / city codes; consider normalizing at supplier level
-func (hs Hotels) mergeLocation() *Location {
-	return &Location{
-		Latitude:  new(1.264751),
-		Longitude: new(103.824006),
-		Address:   new("8 Sentosa Gateway, Beach Villas, 098269"),
-		City:      new("Singapore"),
-		Country:   new("Singapore"),
+// returns first lng+lat we find
+// TODO: find a more precise way of determining geolocation (decimal places?)
+func (hs Hotels) mergeGeoLocation() *GeoLocation {
+	for _, h := range hs {
+		if h.Location == nil {
+			continue
+		}
+		if h.Location.Latitude != nil && h.Location.Longitude != nil {
+			return &GeoLocation{
+				Latitude:  h.Location.Latitude,
+				Longitude: h.Location.Longitude,
+			}
+		}
 	}
+
+	return nil
+}
+
+type GeoLocation struct {
+	Latitude  *float64
+	Longitude *float64
+}
+
+func (hs Hotels) mergeLocation() *Location {
+	if hs == nil {
+		return nil
+	}
+
+	getLongestStringPointer := func(stringPointers []*string) *string {
+		// trim spaces
+		stringPointers = Transform(stringPointers, func(stringPointer *string) *string {
+			if stringPointer == nil || len(*stringPointer) <= 0 {
+				return stringPointer
+			}
+
+			return new(strings.TrimSpace(*stringPointer))
+		})
+
+		// remove nil and empty strings
+		stringPointers = Filter(
+			stringPointers,
+			func(stringPointer *string) bool {
+				return stringPointer != nil && len(*stringPointer) > 0
+			},
+		)
+
+		// find longest
+		var longestStringPointer *string
+		for _, stringPointer := range stringPointers {
+			if longestStringPointer == nil || len(*stringPointer) > len(*longestStringPointer) {
+				longestStringPointer = stringPointer
+			}
+		}
+		return longestStringPointer
+	}
+
+	location := &Location{
+		Address: getLongestStringPointer(Transform(hs, func(h Hotel) *string {
+			if h.Location == nil {
+				return nil
+			}
+			return h.Location.Address
+		})),
+		City: getLongestStringPointer(Transform(hs, func(h Hotel) *string {
+			if h.Location == nil {
+				return nil
+			}
+			// TODO: attempt to resolve ISO country / city codes; consider normalizing at supplier level
+			return h.Location.City
+		})),
+		Country: getLongestStringPointer(Transform(hs, func(h Hotel) *string {
+			if h.Location == nil {
+				return nil
+			}
+			// TODO: attempt to resolve ISO country / city codes; consider normalizing at supplier level
+			return h.Location.Country
+		})),
+	}
+
+	geo := hs.mergeGeoLocation()
+	if geo != nil && geo.Latitude != nil && geo.Longitude != nil {
+		location.Latitude = geo.Latitude
+		location.Longitude = geo.Longitude
+	}
+
+	return location
 }
 
 func (hs Hotels) mergeDescription() string {

@@ -19,8 +19,7 @@
         - e.g. convert to lower case
         - etc
 1. the final data structure (hashmap<key=hotel.id, val=hotel object>) will be used in some writer / setter function on a Repostory class
-    - consider redux patterns where we pre-compute a 2nd copy that's grouped by _destination_id_
-        - TODO: replace above line with the correct name if you remember
+    - consider denormalization where we pre-compute a 2nd copy that's grouped by _destination_id_
         - this is a quick win to allow fetching records in O(1) time rather than O(n) - hashmap vs array lookup
     - Repo layer hides how data is stored, will make it more extensible should we change to something like kv store / sql / nosql / etc.
 1. the Web API / REST server will contain a reference to the Repository class via Dependency Injection

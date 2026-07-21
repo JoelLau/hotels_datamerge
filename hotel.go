@@ -32,6 +32,8 @@ var amenityOverrides = map[string]string{
 
 // TODO: categorize amenities
 // WARN: feature incomplete! everything is classified as "general" now
+// TODO: consolidate entries / remove duplicates - e.g. remove "pool" if "indoor pool" exists
+// TODO: rename entries - e.g. "tub" -> "bathtub"
 func NewAmenities(raw []string) Amenities {
 	amenities := Amenities{
 		General: make([]string, 0),
