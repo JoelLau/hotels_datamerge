@@ -87,11 +87,11 @@ func (hs Hotels) mergeName() string {
 	return longestName
 }
 
-func (hs Hotels) mergeLocation() Location {
-	return Location{
+func (hs Hotels) mergeLocation() *Location {
+	return &Location{
 		Latitude:  new(1.264751),
 		Longitude: new(103.824006),
-		Address:   "8 Sentosa Gateway, Beach Villas, 098269",
+		Address:   new("8 Sentosa Gateway, Beach Villas, 098269"),
 		City:      new("Singapore"),
 		Country:   new("Singapore"),
 	}

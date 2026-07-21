@@ -65,10 +65,10 @@ func TestHotels(t *testing.T) {
 					ID:            "iJhz",
 					DestinationID: 5432,
 					Name:          "Beach Villas Singapore",
-					Location: hotels.Location{
+					Location: &hotels.Location{
 						Latitude:  new(1.264751),
 						Longitude: new(103.824006),
-						Address:   " 8 Sentosa Gateway, Beach Villas ",
+						Address:   new(" 8 Sentosa Gateway, Beach Villas "),
 						City:      new("Singapore"),
 						Country:   new("SG"),
 					},
@@ -81,10 +81,10 @@ func TestHotels(t *testing.T) {
 					ID:            "iJhz",
 					DestinationID: 5432,
 					Name:          "Beach Villas Singapore",
-					Location: hotels.Location{
+					Location: &hotels.Location{
 						Latitude:  new(1.264751),
 						Longitude: new(103.824006),
-						Address:   "8 Sentosa Gateway, Beach Villas, 098269",
+						Address:   new("8 Sentosa Gateway, Beach Villas, 098269"),
 					},
 					Description: "Located at the western tip of Resorts World Sentosa, guests at the Beach Villas are guaranteed privacy while they enjoy spectacular views of glittering waters.",
 					Amenities: hotels.Amenities{
@@ -105,8 +105,8 @@ func TestHotels(t *testing.T) {
 					ID:            "iJhz",
 					DestinationID: 5432,
 					Name:          "Beach Villas Singapore",
-					Location: hotels.Location{
-						Address: "8 Sentosa Gateway, Beach Villas, 098269",
+					Location: &hotels.Location{
+						Address: new("8 Sentosa Gateway, Beach Villas, 098269"),
 						Country: new("Singapore"),
 					},
 					Description: "Surrounded by tropical gardens, these upscale villas in elegant Colonial-style buildings are part of the Resorts World Sentosa complex and a 2-minute walk from the Waterfront train station. Featuring sundecks and pool, garden or sea views, the plush 1- to 3-bedroom villas offer free Wi-Fi and flat-screens, as well as free-standing baths, minibars, and tea and coffeemaking facilities. Upgraded villas add private pools, fridges and microwaves; some have wine cellars. A 4-bedroom unit offers a kitchen and a living room. There's 24-hour room and butler service. Amenities include posh restaurant, plus an outdoor pool, a hot tub, and free parking.",
@@ -137,10 +137,10 @@ func TestHotels(t *testing.T) {
 				ID:            "iJhz",
 				DestinationID: 5432,
 				Name:          "Beach Villas Singapore",
-				Location: hotels.Location{
+				Location: &hotels.Location{
 					Latitude:  new(1.264751),
 					Longitude: new(103.824006),
-					Address:   "8 Sentosa Gateway, Beach Villas, 098269",
+					Address:   new("8 Sentosa Gateway, Beach Villas, 098269"),
 					City:      new("Singapore"),
 					Country:   new("Singapore"),
 				},

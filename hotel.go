@@ -6,7 +6,7 @@ type Hotel struct {
 	ID                string    `json:"id"`             // e.g. "iJhz"
 	DestinationID     int       `json:"destination_id"` // e.g. 5432
 	Name              string    `json:"name"`           // e.g. "Beach Villas Singapore"
-	Location          Location  `json:"location"`       //
+	Location          *Location `json:"location"`       //
 	Description       string    `json:"description"`    // e.g. "Surrounded by tropical gardens, ..." (truncated)
 	Amenities         Amenities `json:"amenities"`
 	Images            Images    `json:"images"`
@@ -16,7 +16,7 @@ type Hotel struct {
 type Location struct {
 	Latitude  *float64 `json:"lat"`     // e.g. 1.264751
 	Longitude *float64 `json:"lng"`     // e.g. 103.824006
-	Address   string   `json:"address"` // e.g. "8 Sentosa Gateway, Beach Villas, 098269"
+	Address   *string  `json:"address"` // e.g. "8 Sentosa Gateway, Beach Villas, 098269"
 	City      *string  `json:"city"`    // e.g. "Singapore"
 	Country   *string  `json:"country"` // e.g. "SG"
 }

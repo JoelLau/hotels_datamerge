@@ -28,15 +28,12 @@ func (h *AcmeHotel) Hotel() *Hotel {
 		ID:            strings.TrimSpace(h.ID),
 		DestinationID: h.DestinationID,
 		Name:          strings.TrimSpace(h.Name),
-		Location: Location{
-			// TODO: writing to lat/lng should be atomic - set both or neither
+		Location: &Location{
 			Latitude:  h.Latitude,
 			Longitude: h.Longitude,
-
-			// TODO: nil on empty string
-			Address: strings.TrimSpace(h.Address),
-			City:    new(strings.TrimSpace(h.City)),
-			Country: new(strings.TrimSpace(h.Country)),
+			Address:   NilIfEmpty(strings.TrimSpace(h.Address)),
+			City:      NilIfEmpty(strings.TrimSpace(h.City)),
+			Country:   NilIfEmpty(strings.TrimSpace(h.Country)),
 		},
 		Description: strings.TrimSpace(h.Description),
 		Amenities:   NewAmenities(h.Facilities),

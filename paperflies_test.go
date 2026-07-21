@@ -236,10 +236,10 @@ func TestPaperfliesHotel(t *testing.T) {
 				ID:            "iJhz",
 				DestinationID: 5432,
 				Name:          "Beach Villas Singapore",
-				Location: hotels.Location{
+				Location: &hotels.Location{
 					Latitude:  nil,
 					Longitude: nil,
-					Address:   "8 Sentosa Gateway, Beach Villas, 098269",
+					Address:   new("8 Sentosa Gateway, Beach Villas, 098269"),
 					Country:   new("Singapore"),
 					City:      nil,
 				},

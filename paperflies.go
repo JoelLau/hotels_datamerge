@@ -22,12 +22,12 @@ func (h *PaperfliesHotel) Hotel() *Hotel {
 		ID:            strings.TrimSpace(h.HotelID),
 		DestinationID: h.DestinationID,
 		Name:          strings.TrimSpace(h.HotelName),
-		Location: Location{
+		Location: &Location{
 			Latitude:  nil,
 			Longitude: nil,
-			Address:   strings.TrimSpace(h.Location.Address),
+			Address:   NilIfEmpty(strings.TrimSpace(h.Location.Address)),
 			City:      nil,
-			Country:   new(strings.TrimSpace(h.Location.Country)),
+			Country:   NilIfEmpty(strings.TrimSpace(h.Location.Country)),
 		},
 		Description: strings.TrimSpace(h.Details),
 		Amenities: Amenities{

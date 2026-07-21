@@ -131,10 +131,10 @@ func TestAcmeHotel(t *testing.T) {
 				ID:            "iJhz",
 				DestinationID: 5432,
 				Name:          "Beach Villas Singapore",
-				Location: hotels.Location{
+				Location: &hotels.Location{
 					Latitude:  new(1.264751),
 					Longitude: new(103.824006),
-					Address:   "8 Sentosa Gateway, Beach Villas",
+					Address:   new("8 Sentosa Gateway, Beach Villas"),
 					City:      new("Singapore"),
 					Country:   new("SG"),
 				},
