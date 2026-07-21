@@ -14,11 +14,11 @@ type Hotel struct {
 }
 
 type Location struct {
-	Latitude  float64 `json:"lat"`     // e.g. 1.264751
-	Longitude float64 `json:"lng"`     // e.g. 103.824006
-	Address   string  `json:"address"` // e.g. "8 Sentosa Gateway, Beach Villas, 098269"
-	City      string  `json:"city"`    // e.g. "Singapore"
-	Country   string  `json:"country"` // e.g. "Singapore"
+	Latitude  *float64 `json:"lat"`     // e.g. 1.264751
+	Longitude *float64 `json:"lng"`     // e.g. 103.824006
+	Address   string   `json:"address"` // e.g. "8 Sentosa Gateway, Beach Villas, 098269"
+	City      *string  `json:"city"`    // e.g. "Singapore"
+	Country   *string  `json:"country"` // e.g. "SG"
 }
 
 type Amenities struct {

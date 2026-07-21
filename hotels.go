@@ -89,11 +89,11 @@ func (hs Hotels) mergeName() string {
 
 func (hs Hotels) mergeLocation() Location {
 	return Location{
-		Latitude:  1.264751,
-		Longitude: 103.824006,
+		Latitude:  new(1.264751),
+		Longitude: new(103.824006),
 		Address:   "8 Sentosa Gateway, Beach Villas, 098269",
-		City:      "Singapore",
-		Country:   "Singapore",
+		City:      new("Singapore"),
+		Country:   new("Singapore"),
 	}
 }
 

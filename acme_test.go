@@ -132,11 +132,11 @@ func TestAcmeHotel(t *testing.T) {
 				DestinationID: 5432,
 				Name:          "Beach Villas Singapore",
 				Location: hotels.Location{
-					Latitude:  1.264751,
-					Longitude: 103.824006,
+					Latitude:  new(1.264751),
+					Longitude: new(103.824006),
 					Address:   "8 Sentosa Gateway, Beach Villas",
-					City:      "Singapore",
-					Country:   "SG",
+					City:      new("Singapore"),
+					Country:   new("SG"),
 				},
 				Description: "This 5 star hotel is located on the coastline of Singapore.",
 				Amenities: hotels.Amenities{
