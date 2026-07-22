@@ -123,4 +123,3 @@ requires [Go (the program)](https://go.dev/)
   - any number of query parameters can be applied (none, 1, both)
 - `GET /livez`, `GET /readyz` endpoints
   - quick win to be k8s ready
-  - `readyz` is used in Dockerfile healthcheck
