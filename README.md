@@ -3,29 +3,12 @@
 [![Test](https://github.com/JoelLau/hotels_datamerge/actions/workflows/test.yaml/badge.svg?branch=main&event=push)](https://github.com/JoelLau/hotels_datamerge/actions/workflows/test.yaml)
 [![Lint](https://github.com/JoelLau/hotels_datamerge/actions/workflows/lint.yaml/badge.svg?branch=main&event=push)](https://github.com/JoelLau/hotels_datamerge/actions/workflows/lint.yaml)
 
-To see what this project is about, see [REQUIREMENTS.md](REQUIREMENTS.md)
+This project contains HTTP Server that serves hotel data obtained form multiple suppliers (acme, paperflies, patagonia).
+You can find the endpoint design in [openapi.yaml](openapi.yaml), or access the rendered version server at [localhost:8080/docs](localhost:8080/docs) once the server is running.
 
-## Usage
+For full requirements specification, see [REQUIREMENTS.md](REQUIREMENTS.md)
 
-_**TODO**: list instructions and pre-requisites to running this project_
-
-## OpenAPI Codegen
-
-Server types and the chi `ServerInterface` are generated from [openapi.yaml](openapi.yaml) into `gen/api/`.
-
-To regenerate after editing `openapi.yaml`:
-
-```sh
-go generate ./gen/api/...
-```
-
-## API Docs
-
-`/docs` serves Swagger UI, `/openapi.yaml` serves the raw spec — both embedded in the binary, no CDN, works offline.
-
-To update the vendored Swagger UI assets, replace the files in `internal/swaggerdocs/dist/` with a newer [swagger-ui-dist](https://www.npmjs.com/package/swagger-ui-dist) release.
-
-## Design
+## Data Flow
 
 ```mermaid
 flowchart LR
@@ -50,9 +33,68 @@ flowchart LR
     Server -->|GET /api/v1/hotels| Client
 ```
 
+## Usage
+
+1. Start the server ([see section on Running The HTTP Server](#running-the-http-server))
+1. open the swaggerdoc included
+
+## Running The HTTP Server
+
+This projects includes multiple ways to start the server.
+
+### Docker
+
+Assumes a running version of [Docker](https://www.docker.com/products/docker-desktop/) on your machine
+
+1. `docker build -t hotels_datamerge .`
+1. run
+    - in background: `docker run -d --name hotels_datamerge -p 8080:8080 hotels_datamerge`
+    - in foreground: `docker run --rm --name hotels_datamerge -p 8080:8080 hotels_datamerge`
+1. show logs `docker logs -f hotels_datamerge`
+1. stop image `docker stop hotels_datamerge`
+
+### Binary
+
+1. navigate to [the project's Releases page](https://github.com/JoelLau/hotels_datamerge/releases)
+1. under the latest release, expand the Assets dropdown
+1. download the binary file relevant to your machine:
+    - macos (arm / m+ chips)
+        - download hotels_data_merge-darwin-arm64
+        - give it permissions to execute `chmod a+x hotels_data_merge-darwin-arm64`
+        - run the binary `./hotels_data_merge-darwin-arm64`
+    - windows
+        - download hotels_data_merge-windows-amd64.exe
+        - double click to run
+
+additional notes:
+
+- use ctrl+c (SIGINT) to terminate the service
+
+### Native Go
+
+requires [Go (the program)](https://go.dev/)
+
+1. install dependencies `go mod tidy`
+1. run `go run cmd/main.go`
+1. ctrl + c (SIGINT) to terminate the service
+
+
+## Development / Commands
+
+- install dependencies `go mod tidy`
+- generate code
+  - openapi codege `go generate ./gen/api/...`
+  - `openapi.yaml` is the source of truth for the API; after editing it, rerun codegen before building so generated types/server interfaces in `gen/api/` don't drift from the spec
+- build the binary `go build ./...`
+- run tests: `go test ./...`
+- format code: `golangci-lint fmt` (runs `gofumpt` + `goimports`, configured in `.golangci.yml`)
+- lint: `golangci-lint run` (enables `errorlint`, `revive`, `misspell`, `unconvert`, `unparam`, `paralleltest`, `tparallel`)
+- vet: `go vet ./...`
+- run locally: `go run cmd/main.go`
+
 ## Field Selection Rules
 
-**Rule of Thumb**: assume longest string is most details
+**Rule of Thumb**: assume longest string is most details / precise
 
 | Field                | Rule                                                       |
 | -------------------- | ---------------------------------------------------------- |

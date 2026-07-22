@@ -4,8 +4,10 @@ go 1.26.5
 
 require (
 	github.com/getkin/kin-openapi v0.142.0
+	github.com/go-chi/chi v1.5.5
 	github.com/go-chi/chi/v5 v5.3.1
 	github.com/go-chi/httplog/v2 v2.1.1
+	github.com/go-chi/render v1.0.3
 	github.com/oapi-codegen/runtime v1.6.0
 	github.com/stretchr/testify v1.11.1
 )
@@ -15,7 +17,6 @@ require (
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/dprotaso/go-yit v0.0.0-20220510233725-9ba8df137936 // indirect
-	github.com/go-chi/render v1.0.3 // indirect
 	github.com/go-openapi/jsonpointer v0.23.1 // indirect
 	github.com/go-openapi/swag/jsonname v0.26.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
