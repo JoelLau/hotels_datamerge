@@ -5,10 +5,6 @@ import (
 	"log/slog"
 )
 
-type App interface {
-	Run(context.Context) error
-}
-
 type Repository struct{}
 
 func NewRepository() *Repository {
@@ -18,18 +14,13 @@ func NewRepository() *Repository {
 func (repo *Repository) SetHotel(hotels []Hotel) {
 }
 
-func (repo *Repository) GetHotelByID(id string) (Hotel, bool) {
-	return Hotel{}, false
-}
-
-func (repo *Repository) GetHotelByDestinationID(destination int) (Hotel, bool) {
-	return Hotel{}, false
+func (repo *Repository) GetHotels(ctx context.Context, destination *int, hotelIDs []string) ([]Hotel, error) {
+	return nil, nil
 }
 
 type Repo interface {
 	SetHotel(hotels []Hotel)
-	GetHotelByID(id string) (Hotel, bool)
-	GetHotelByDestinationID(destination int) (Hotel, bool)
+	GetHotels(ctx context.Context, destination *int, hotelIDs []string) ([]Hotel, error)
 }
 
 // writes data to the repository

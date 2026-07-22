@@ -48,7 +48,6 @@ type App interface {
 	Run(context.Context) error
 }
 
-// TODO: add config options
 func NewSlogger() *slog.Logger {
 	return slog.New(
 		slog.NewTextHandler(
