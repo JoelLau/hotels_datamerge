@@ -97,11 +97,10 @@ func (s *Server) GetApiV1Hotels(w http.ResponseWriter, r *http.Request, params a
 	hs, err := s.repo.GetHotels(r.Context(), destination, hotelIDs)
 	if err != nil {
 		slog.ErrorContext(r.Context(), "failed to fetch hotels", slog.Any("error", err))
-		render.Status(r, http.StatusInternalServerError)
-		render.JSON(w, r, map[string]any{
-			"title":  "failed to fetch hotels",
-			"status": http.StatusInternalServerError,
-		})
+		title := "failed to fetch hotels"
+		status := http.StatusInternalServerError
+		render.Status(r, status)
+		render.JSON(w, r, api.ErrorResponse{Title: &title, Status: &status})
 		return
 	}
 

@@ -81,6 +81,16 @@ paths:
                 sample:
                   $ref: "#/components/examples/Hotels"
 
+        "500":
+          description: failed to fetch hotels
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                sample:
+                  $ref: "#/components/examples/FetchError"
+
 components:
   schemas:
     StatusResponse:
@@ -264,3 +274,8 @@ components:
         components:
           database: "down"
           cache: "up"
+
+    FetchError:
+      value:
+        title: "failed to fetch hotels"
+        status: 500
