@@ -2,10 +2,30 @@ package hotels
 
 import (
 	"fmt"
+	"log/slog"
 	"maps"
 	"slices"
 	"strings"
 )
+
+func GroupAndMerge(hs []Hotel) []Hotel {
+	byID := map[string][]Hotel{}
+	for _, h := range hs {
+		byID[h.ID] = append(byID[h.ID], h)
+	}
+
+	result := make([]Hotel, 0, len(byID))
+	for _, group := range byID {
+		merged, err := NewHotels(group)
+		if err != nil {
+			slog.Error("skipping hotel group due to conflicting destination ids", slog.Any("error", err))
+			continue
+		}
+		result = append(result, merged.Merge())
+	}
+
+	return result
+}
 
 type ConflictingDestinationIDsError struct {
 	HotelID        string

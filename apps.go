@@ -9,6 +9,7 @@ import (
 	"log/slog"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -43,24 +44,67 @@ type Repo interface {
 	Ping(ctx context.Context) error
 }
 
-// writes data to the repository
-//
-// TODO: fetch data from suppliers
-// TODO: fetch data at intervals
-// TODO: write data to repository
 type Fetcher struct {
-	repo *Repo
+	repo            Repo
+	producers       []DataProducer
+	interval        time.Duration
+	producerTimeout time.Duration
 }
 
-func NewFetcher(r Repo) *Fetcher {
-	return &Fetcher{}
+func NewFetcher(r Repo, producers []DataProducer, interval, producerTimeout time.Duration) *Fetcher {
+	return &Fetcher{
+		repo:            r,
+		producers:       producers,
+		interval:        interval,
+		producerTimeout: producerTimeout,
+	}
 }
 
 func (f *Fetcher) Run(ctx context.Context) error {
 	slog.InfoContext(ctx, "starting fetcher")
-	<-ctx.Done()
-	slog.InfoContext(ctx, "exiting fetcher")
-	return nil
+
+	ticker := time.NewTicker(f.interval)
+	defer ticker.Stop()
+
+	for {
+		f.fetchAll(ctx)
+
+		select {
+		case <-ctx.Done():
+			slog.InfoContext(ctx, "exiting fetcher")
+			return nil
+		case <-ticker.C:
+		}
+	}
+}
+
+func (f *Fetcher) fetchAll(ctx context.Context) {
+	var mu sync.Mutex
+	var all []Hotel
+
+	var wg sync.WaitGroup
+	for _, p := range f.producers {
+		wg.Add(1)
+		go func(p DataProducer) {
+			defer wg.Done()
+
+			pctx, cancel := context.WithTimeout(ctx, f.producerTimeout)
+			defer cancel()
+
+			hs, err := p.Fetch(pctx)
+			if err != nil {
+				slog.ErrorContext(ctx, "producer fetch failed", slog.String("producer", p.Name()), slog.Any("error", err))
+				return
+			}
+
+			mu.Lock()
+			all = append(all, hs...)
+			mu.Unlock()
+		}(p)
+	}
+	wg.Wait()
+
+	f.repo.SetHotel(GroupAndMerge(all))
 }
 
 // serves repo data via REST endpoint
@@ -69,7 +113,7 @@ type Server struct {
 	server *http.Server
 }
 
-func NewServer(r Repo, logger *slog.Logger) *Server {
+func NewServer(r Repo, logger *slog.Logger, addr string) *Server {
 	s := &Server{repo: r}
 
 	router := chi.NewRouter()
@@ -85,7 +129,7 @@ func NewServer(r Repo, logger *slog.Logger) *Server {
 	})
 	router.Mount("/docs/", swaggerdocs.Handler("/docs/"))
 
-	s.server = &http.Server{Addr: ":8080", Handler: router}
+	s.server = &http.Server{Addr: addr, Handler: router}
 
 	return s
 }
