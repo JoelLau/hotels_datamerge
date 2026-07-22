@@ -1,7 +1,7 @@
 # Hotels Data Merge
 
-[![Test](https://github.com/JoelLau/hotels_datamerge/actions/workflows/ci.yml/badge.svg?branch=main&event=push&job=Test)](https://github.com/JoelLau/hotels_datamerge/actions/workflows/ci.yml)
-[![Lint](https://github.com/JoelLau/hotels_datamerge/actions/workflows/ci.yml/badge.svg?branch=main&event=push&job=Lint)](https://github.com/JoelLau/hotels_datamerge/actions/workflows/ci.yml)
+[![Test](https://github.com/JoelLau/hotels_datamerge/actions/workflows/test.yaml/badge.svg?branch=main&event=push)](https://github.com/JoelLau/hotels_datamerge/actions/workflows/test.yaml)
+[![Lint](https://github.com/JoelLau/hotels_datamerge/actions/workflows/lint.yaml/badge.svg?branch=main&event=push)](https://github.com/JoelLau/hotels_datamerge/actions/workflows/lint.yaml)
 
 To see what this project is about, see [REQUIREMENTS.md](REQUIREMENTS.md)
 
