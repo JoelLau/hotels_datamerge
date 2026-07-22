@@ -4,7 +4,6 @@ import (
 	"context"
 	hotels "hotels_data_merge"
 	"log/slog"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -20,9 +19,9 @@ func main() {
 
 	cfg := hotels.NewConfig()
 
-	repo := hotels.NewRepository()
+	repo := hotels.NewInMemoryRepository()
 
-	httpClient := &http.Client{Timeout: cfg.HTTPTimeout}
+	httpClient := hotels.NewHTTPClient(cfg.HTTPTimeout)
 	producers := []hotels.DataProducer{
 		hotels.NewAcmeProducer(cfg.AcmeSupplierURL, httpClient),
 		hotels.NewPatagoniaProducer(cfg.PatagoniaSupplierURL, httpClient),
@@ -52,7 +51,7 @@ type App interface {
 
 func NewSlogger() *slog.Logger {
 	return slog.New(
-		slog.NewTextHandler(
+		slog.NewJSONHandler(
 			os.Stderr,
 			&slog.HandlerOptions{
 				AddSource: true,

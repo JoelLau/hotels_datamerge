@@ -21,23 +21,6 @@ import (
 //go:embed openapi.yaml
 var openapiSpec []byte
 
-type Repository struct{}
-
-func NewRepository() *Repository {
-	return &Repository{}
-}
-
-func (repo *Repository) SetHotel(hotels []Hotel) {
-}
-
-func (repo *Repository) GetHotels(ctx context.Context, destination *int, hotelIDs []string) ([]Hotel, error) {
-	return nil, nil
-}
-
-func (repo *Repository) Ping(ctx context.Context) error {
-	return nil
-}
-
 type Repo interface {
 	SetHotel(hotels []Hotel)
 	GetHotels(ctx context.Context, destination *int, hotelIDs []string) ([]Hotel, error)
@@ -134,6 +117,10 @@ func NewServer(r Repo, logger *slog.Logger, addr string) *Server {
 	return s
 }
 
+func (s *Server) Handler() http.Handler {
+	return s.server.Handler
+}
+
 func (s *Server) Run(ctx context.Context) error {
 	slog.InfoContext(ctx, "starting server", slog.String("addr", s.server.Addr))
 
@@ -162,6 +149,7 @@ func (s *Server) GetLivez(w http.ResponseWriter, r *http.Request) {
 // GetReadyz implements api.ServerInterface.
 func (s *Server) GetReadyz(w http.ResponseWriter, r *http.Request) {
 	if err := s.repo.Ping(r.Context()); err != nil {
+		slog.ErrorContext(r.Context(), "readiness check failed", slog.Any("error", err))
 		render.Status(r, http.StatusServiceUnavailable)
 		render.JSON(w, r, api.StatusResponse{Status: api.Unhealthy})
 		return
@@ -187,6 +175,7 @@ func (s *Server) GetApiV1Hotels(w http.ResponseWriter, r *http.Request, params a
 
 	hs, err := s.repo.GetHotels(r.Context(), destination, hotelIDs)
 	if err != nil {
+		slog.ErrorContext(r.Context(), "failed to fetch hotels", slog.Any("error", err))
 		render.Status(r, http.StatusInternalServerError)
 		render.JSON(w, r, map[string]any{
 			"title":  "failed to fetch hotels",
