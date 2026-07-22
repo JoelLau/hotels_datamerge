@@ -1,0 +1,7 @@
+.git
+docs
+sample_data
+*_test.go
+coverage.out
+README.md
+REQUIREMENTS.md
