@@ -2,18 +2,23 @@ package hotels
 
 import (
 	"context"
+	_ "embed"
 	"fmt"
+	"hotels_data_merge/gen/api"
+	"hotels_data_merge/internal/swaggerdocs"
 	"log/slog"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/httplog/v2"
 	"github.com/go-chi/render"
-
-	"hotels_data_merge/gen/api"
 )
+
+//go:embed openapi.yaml
+var openapiSpec []byte
 
 type Repository struct{}
 
@@ -74,6 +79,12 @@ func NewServer(r Repo, logger *slog.Logger) *Server {
 	router.Use(middleware.Timeout(30 * time.Second))
 	api.HandlerFromMux(s, router)
 
+	router.Get("/openapi.yaml", swaggerdocs.SpecHandler(openapiSpec, "application/yaml"))
+	router.Get("/docs", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/docs/", http.StatusMovedPermanently)
+	})
+	router.Mount("/docs/", swaggerdocs.Handler("/docs/"))
+
 	s.server = &http.Server{Addr: ":8080", Handler: router}
 
 	return s
@@ -126,7 +137,8 @@ func (s *Server) GetApiV1Hotels(w http.ResponseWriter, r *http.Request, params a
 
 	var hotelIDs []string
 	if params.Hotels != nil {
-		hotelIDs = *params.Hotels
+		hotelIDs = strings.Split(*params.Hotels, ",")
+		hotelIDs = Transform(hotelIDs, strings.TrimSpace)
 	}
 
 	hs, err := s.repo.GetHotels(r.Context(), destination, hotelIDs)

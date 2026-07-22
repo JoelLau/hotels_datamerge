@@ -16,6 +16,12 @@ To regenerate after editing `openapi.yaml`:
 go generate ./gen/api/...
 ```
 
+## API Docs
+
+`/docs` serves Swagger UI, `/openapi.yaml` serves the raw spec — both embedded in the binary, no CDN, works offline.
+
+To update the vendored Swagger UI assets, replace the files in `internal/swaggerdocs/dist/` with a newer [swagger-ui-dist](https://www.npmjs.com/package/swagger-ui-dist) release.
+
 ## Design
 
 ```mermaid

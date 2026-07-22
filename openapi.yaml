@@ -58,18 +58,16 @@ paths:
       parameters:
         - name: hotels
           in: query
-          description: comma-separated list of hotel ids, e.g. hotels=1,2
-          schema:
-            type: array
-            items:
-              type: string
-          style: form
-          explode: false
-        - name: destination
-          in: query
-          description: destination id, e.g. destination=1
+          description: comma-separated list of hotel ids
           schema:
             type: string
+          example: "iJhz,SjyX,f8c9"
+        - name: destination
+          in: query
+          description: destination id
+          schema:
+            type: string
+          example: "5432"
       responses:
         "200":
           description: list of hotels matching the given filters
