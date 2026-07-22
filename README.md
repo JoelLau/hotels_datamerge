@@ -4,7 +4,7 @@
 [![Lint](https://github.com/JoelLau/hotels_datamerge/actions/workflows/lint.yaml/badge.svg?branch=main&event=push)](https://github.com/JoelLau/hotels_datamerge/actions/workflows/lint.yaml)
 
 This project contains HTTP Server that serves hotel data obtained form multiple suppliers (acme, paperflies, patagonia).
-You can find the endpoint design in [openapi.yaml](openapi.yaml), or access the rendered version server at [localhost:8080/docs](localhost:8080/docs) once the server is running.
+You can find the endpoint design in [openapi.yaml](openapi.yaml), or access the rendered version server at [http://localhost:8080/docs](http://localhost:8080/docs) once the server is running.
 
 For full requirements specification, see [REQUIREMENTS.md](REQUIREMENTS.md)
 
@@ -35,8 +35,9 @@ flowchart LR
 
 ## Usage
 
-1. Start the server ([see section on Running The HTTP Server](#running-the-http-server))
-1. open the swaggerdoc included
+1. start the server ([see section on Running The HTTP Server](#running-the-http-server))
+1. navigate to [http://localhost:8080/docs/](http://localhost:8080/docs/)
+
 
 ## Running The HTTP Server
 

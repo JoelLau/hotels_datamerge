@@ -41,15 +41,17 @@ type Hotels []Hotel
 // WARN: assumes all ids are the same because of
 // how upstream code is structured at this point on 2026-07-19.
 func NewHotels(hs []Hotel) (Hotels, error) {
-	destinationIDs := map[int]bool{}
+	destinationIDSet := map[int]bool{}
 	for _, sh := range hs {
-		destinationIDs[sh.DestinationID] = true
+		destinationIDSet[sh.DestinationID] = true
 	}
 
-	if len(destinationIDs) > 1 {
+	if len(destinationIDSet) > 1 {
+		destinationIDs := make([]int, 0, len(destinationIDSet))
+		destinationIDs = append(destinationIDs, slices.Collect(maps.Keys(destinationIDSet))...)
 		return hs, &ConflictingDestinationIDsError{
 			HotelID:        hs[0].ID,
-			DestinationIDs: slices.Collect(maps.Keys(destinationIDs)),
+			DestinationIDs: destinationIDs,
 		}
 	}
 
@@ -242,7 +244,8 @@ func (hs Hotels) mergeImages() Images {
 			}
 		}
 
-		result := slices.Collect(maps.Values(linkToImageMap))
+		result := make([]Image, 0, len(linkToImageMap))
+		result = append(result, slices.Collect(maps.Values(linkToImageMap))...)
 		slices.SortStableFunc(result, func(a, b Image) int {
 			return strings.Compare(a.Link, b.Link)
 		})
