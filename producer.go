@@ -28,7 +28,9 @@ func fetchJSON[T any](ctx context.Context, client HTTPClient, url string) (T, er
 	if err != nil {
 		return out, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		return out, fmt.Errorf("unexpected status code %d from %s", resp.StatusCode, url)
