@@ -2,7 +2,14 @@ package hotels
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"log/slog"
+	"net/http"
+
+	"github.com/go-chi/chi/v5"
+
+	"hotels_data_merge/gen/api"
 )
 
 type Repository struct{}
@@ -44,21 +51,81 @@ func (f *Fetcher) Run(ctx context.Context) error {
 }
 
 // serves repo data via REST endpoint
-//
-// TODO: generate from OpenAPI spec
-// TODO: single REST endpoint
-// TODO: get / validate query param
 type Server struct {
-	repo *Repo
+	repo   Repo
+	server *http.Server
 }
 
 func NewServer(r Repo) *Server {
-	return &Server{}
+	s := &Server{repo: r}
+
+	router := chi.NewRouter()
+	api.HandlerFromMux(s, router)
+
+	s.server = &http.Server{Addr: ":8080", Handler: router}
+
+	return s
 }
 
-func (f *Server) Run(ctx context.Context) error {
-	slog.InfoContext(ctx, "starting server")
-	<-ctx.Done()
+func (s *Server) Run(ctx context.Context) error {
+	slog.InfoContext(ctx, "starting server", slog.String("addr", s.server.Addr))
+
+	errCh := make(chan error, 1)
+	go func() {
+		if err := s.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			errCh <- err
+		}
+	}()
+
+	select {
+	case err := <-errCh:
+		return err
+	case <-ctx.Done():
+	}
+
 	slog.InfoContext(ctx, "exiting server")
-	return nil
+	return s.server.Shutdown(context.Background())
+}
+
+// GetLivez implements api.ServerInterface.
+func (s *Server) GetLivez(w http.ResponseWriter, r *http.Request) {
+	writeJSON(w, http.StatusOK, api.StatusResponse{Status: api.Healthy})
+}
+
+// GetReadyz implements api.ServerInterface.
+func (s *Server) GetReadyz(w http.ResponseWriter, r *http.Request) {
+	writeJSON(w, http.StatusOK, api.StatusResponse{Status: api.Healthy})
+}
+
+// GetApiV1Hotels implements api.ServerInterface.
+func (s *Server) GetApiV1Hotels(w http.ResponseWriter, r *http.Request, params api.GetApiV1HotelsParams) {
+	var destination *int
+	if params.Destination != nil {
+		var d int
+		if _, err := fmt.Sscanf(*params.Destination, "%d", &d); err == nil {
+			destination = &d
+		}
+	}
+
+	var hotelIDs []string
+	if params.Hotels != nil {
+		hotelIDs = *params.Hotels
+	}
+
+	hs, err := s.repo.GetHotels(r.Context(), destination, hotelIDs)
+	if err != nil {
+		writeJSON(w, http.StatusInternalServerError, map[string]any{
+			"title":  "failed to fetch hotels",
+			"status": http.StatusInternalServerError,
+		})
+		return
+	}
+
+	writeJSON(w, http.StatusOK, hs)
+}
+
+func writeJSON(w http.ResponseWriter, status int, v any) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	_ = json.NewEncoder(w).Encode(v)
 }
