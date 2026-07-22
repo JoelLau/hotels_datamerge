@@ -20,7 +20,7 @@ func main() {
 	repo := hotels.NewRepository()
 
 	fetcher := hotels.NewFetcher(repo)
-	server := hotels.NewServer(repo)
+	server := hotels.NewServer(repo, slog.Default())
 
 	go func() {
 		// TODO: retry on failure
